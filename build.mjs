@@ -202,7 +202,7 @@ ${body}
   <p>© ${new Date().getFullYear()} ${esc(cfg.author.name)}</p>
   <p>${cfg.links.map(l => `<a href="${esc(l.href)}" rel="me noopener">${esc(linkName(l))}</a>`).join(' · ')}</p>
 </footer>
-${cfg.goatcounter ? `<script data-goatcounter="${esc(cfg.goatcounter)}" async src="//gc.zgo.at/count.js"></script>
+${cfg.goatcounter ? `<script data-goatcounter="${esc(cfg.goatcounter)}" async src="https://gc.zgo.at/count.js"></script>
 <noscript><img src="${esc(cfg.goatcounter)}?p=${encodeURIComponent(url)}" alt="" width="1" height="1"></noscript>` : ''}
 </body>
 </html>
