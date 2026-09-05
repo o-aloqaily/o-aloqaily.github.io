@@ -3,10 +3,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const DIST = path.join(import.meta.dirname, '..', 'dist');
-const BUDGET = { 'index.html': 28_000, 'app.js': 20_000 };
+const BUDGET = { 'index.html': 16_000 };
 let fail = 0;
 const bad = m => { console.error('✗ ' + m); fail++; };
-for (const f of ['index.html', 'app.js', 'feed.xml', 'sitemap.xml', '404.html', 'robots.txt', 'favicon.svg']) {
+for (const f of ['index.html', 'feed.xml', 'sitemap.xml', '404.html', 'robots.txt', 'favicon.svg']) {
   if (!fs.existsSync(path.join(DIST, f))) bad(`missing dist/${f}`);
 }
 const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);

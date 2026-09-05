@@ -1,13 +1,11 @@
-# osamh@blog:~$
+# Osamh Aloqaily — personal site
 
-Personal site and blog of Osamh Aloqaily. It behaves like an SSH session: you
-land on `$ ssh guest@osmh`, get a login banner, and type real commands at a
-working prompt (`help`, `ls posts`, `cat about.txt`, `cat posts/<file>.md`).
-Every command and filename in the output is clickable and there are tap chips
-under the prompt, so it works for people who never touch a terminal.
+A formal, editorial personal site and blog: profile, contact links and
+writing. Plain static HTML with system fonts and no JavaScript, so every page
+is a single small request.
 
-- **Zero runtime dependencies.** No framework, no web fonts, no analytics. One
-  inlined stylesheet and one ~5KB deferred script per page.
+- **No runtime dependencies at all.** No framework, no scripts, no web fonts,
+  no analytics. One inlined stylesheet per page.
 - **Build-time only deps:** `marked` (Markdown) and `highlight.js` (code).
 - **Hosting:** GitHub Pages, deployed by `.github/workflows/deploy.yml` on every
   push to `main`.
@@ -48,17 +46,15 @@ npm run check    # build + verify links, image dimensions and size budget
 npm run dev      # build, watch and serve dist/ locally
 ```
 
-## Shell
+## Design
 
-Commands: `help`, `ls [dir]`, `cat <file>`, `cd <dir>`, `open <n>`, `share`,
-`links` (also `github`, `twitter`, `linkedin`, `email`), `theme [dark|light]`,
-`clear`, `neofetch`, `whoami`, `date`, `history`, `exit`. Tab completes
-commands and paths, ↑/↓ walk history, ctrl+c cancels, ctrl+l clears.
+Serif body from the system font stack (Iowan Old Style, Palatino, Charter,
+Georgia), sans-serif for labels, light by default and dark when the visitor's
+OS prefers it. Post pages carry OpenGraph and Twitter card tags, share links
+(X, LinkedIn, email) and newer/older navigation. RSS at `/feed.xml`.
 
-Every page is a complete pre-rendered transcript (home = banner + MOTD, post =
-`cat posts/<file>.md` + the post), so shared links, social cards and no-JS
-visitors all work; `app.js` only makes the prompt live. `cat` of a post fetches
-`/posts/<slug>/body.html` and updates the URL.
+The earlier terminal-style version is kept at the git tag
+`terminal-shell-v1` for reference.
 
 ## Config
 

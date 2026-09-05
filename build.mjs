@@ -22,7 +22,6 @@ const argv = new Set(process.argv.slice(2));
 const esc = (s = '') => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const abs = p => new URL(p, cfg.url).href;
-const PS1 = `<span class="ps1"><span class="u">${esc(cfg.prompt.user)}</span>@<span class="h">${esc(cfg.prompt.host)}</span>:<span class="p">~</span>$</span>`;
 
 function frontmatter(src) {
   const m = src.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
@@ -150,55 +149,15 @@ async function loadPosts() {
 
 // ---------------------------------------------------------------- templates
 const css = await fs.readFile(path.join(ROOT, 'src', 'style.css'), 'utf8');
-const banner = await fs.readFile(path.join(ROOT, 'src', 'banner.txt'), 'utf8');
-const U = esc(cfg.prompt.user), H = esc(cfg.prompt.host);
-const ps1 = (cwd = '~') => `<span class="ps1"><span class="u">${U}@${H}</span>:<span class="p">${esc(cwd)}</span>$</span>`;
-const run = (cmd, label = cmd) => `<button type="button" class="run" data-cmd="${esc(cmd)}">${esc(label)}</button>`;
-const postFile = p => `${p.slug}.md`;
-// One transcript entry: the echoed command line + its output. app.js builds the same markup live.
-const entry = (cmd, out, cwd = '~', cls = '') => `<div class="e${cls ? ' ' + cls : ''}"><div class="c">${ps1(cwd)} <span class="t">${esc(cmd)}</span></div><div class="o">${out}</div></div>`;
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const longDate = iso => { const [y, m, d] = iso.split('-').map(Number); return `${d} ${MONTHS[m - 1]} ${y}`; };
+const LINK_NAMES = { github: 'GitHub', twitter: 'X (Twitter)', linkedin: 'LinkedIn', email: 'Email' };
+const linkName = l => l.name || LINK_NAMES[l.key] || l.key;
 
-// Everything the terminal needs at runtime, embedded once per page.
-const fsJson = posts => JSON.stringify({
-  user: cfg.prompt.user, host: cfg.prompt.host, name: cfg.author.name, tagline: cfg.tagline,
-  photo: cfg.author.photo, photo2x: cfg.author.photo2x, url: cfg.url, banner,
-  links: cfg.links.map(l => ({ key: l.key, label: l.label, href: l.href, handle: l.handle })),
-  posts: posts.map(p => ({ file: postFile(p), slug: p.slug, title: p.title, date: p.date, description: p.description, tags: p.tags, minutes: p.minutes, url: p.url })),
-}).replace(/</g, '\\u003c');
+const contacts = () => `<dl class="contacts">${cfg.links.map(l => `<div><dt>${esc(linkName(l))}</dt><dd><a href="${esc(l.href)}" rel="me noopener">${esc(l.label)}</a></dd></div>`).join('')}</dl>`;
 
-const aboutOut = () => `<div class="who"><img class="avatar" src="${esc(cfg.author.photo)}" srcset="${esc(cfg.author.photo)} 1x, ${esc(cfg.author.photo2x)} 2x" width="96" height="96" alt="Photo of ${esc(cfg.author.name)}"><div><b class="name">${esc(cfg.author.name)}</b>
-${esc(cfg.tagline)}
-
-<span class="dim">Find me:</span> ${run('cat links.txt')}   <span class="dim">Read:</span> ${run('ls posts')}</div></div>`;
-
-const linksOut = () => `<ul class="ls links">${cfg.links.map(l => `<li><span class="k">${esc(l.key)}</span><a href="${esc(l.href)}" rel="me noopener" target="_blank">${esc(l.label)}</a></li>`).join('')}</ul>`;
-
-const lsPostsOut = posts => `<ul class="ls files">${posts.map(p => `<li><a class="file run" data-cmd="cat posts/${esc(postFile(p))}" href="${esc(p.url)}">${esc(postFile(p))}</a><span class="dim">${esc(p.date)} · ${esc(p.title)}</span></li>`).join('')}</ul>`;
-
-const motd = posts => `<pre class="banner" aria-hidden="true">${esc(banner)}</pre><div class="motd">Welcome to <b>${H}</b> — the personal site of <b>${esc(cfg.author.name)}</b>.
-<span class="dim">${esc(cfg.tagline)}</span>
-
-  <span class="dim">who I am        </span>  ${run('cat about.txt')}
-  <span class="dim">where to find me</span>  ${run('cat links.txt')}
-  <span class="dim">${posts.length} post${posts.length === 1 ? ' ' : 's'}         </span>  ${run('ls posts')}
-  <span class="dim">everything      </span>  ${run('help')}
-
-<span class="dim">Last login: ${new Date().toISOString().slice(0, 10)} from 127.0.0.1. Type a command, press <kbd>tab</kbd> to complete, or click any of the above.</span></div>`;
-
-const shortMotd = () => `<div class="motd">Welcome to <b>${H}</b> — ${esc(cfg.author.name)}'s site. Type ${run('help')} for commands.</div>`;
-
-// The rendered post as terminal output; also written to /posts/<slug>/body.html for `cat` at runtime.
-const postOut = p => `<article class="post"><header class="post-head"><h1>${esc(p.title)}</h1><p class="meta"><time datetime="${esc(p.date)}">${esc(p.date)}</time> <span class="dim">·</span> ${p.minutes} min read <span class="dim">·</span> ${p.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join(' ')}</p></header><div class="prose">
-${p.html}
-</div></article>
-<div class="eof"><span class="dim">--- end of ${esc(postFile(p))} ---</span>  ${run('share')}${p.newer ? `  ${run('cat posts/' + postFile(p.newer), 'newer: ' + postFile(p.newer))}` : ''}${p.older ? `  ${run('cat posts/' + postFile(p.older), 'older: ' + postFile(p.older))}` : ''}  ${run('ls posts')}  ${run('help')}</div>`;
-
-const promptHtml = () => `<form id="prompt" class="prompt" autocomplete="off"><label class="ps1" id="ps1" for="in"><span class="u">${U}@${H}</span>:<span class="p">~</span>$</label> <span class="typed" id="typed"></span><span class="cursor" id="cursor"></span><input id="in" type="text" aria-label="Type a command" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" enterkeyhint="send"></form>
-<div class="chips js-only" aria-label="quick commands"><span class="dim">tap:</span> ${run('help')} ${run('cat about.txt', 'about')} ${run('ls posts', 'posts')} ${run('cat links.txt', 'links')} ${run('clear')}</div>
-<noscript><p class="dim small">JavaScript is off, so the prompt above is static. Everything is still reachable through the links in the welcome text.</p></noscript>`;
-
-function layout({ title, description, url, image, body, page, posts, prev, next }) {
-  const fullTitle = page === 'home' ? `${cfg.title} — ${cfg.tagline}` : `${title} — ${cfg.title}`;
+function layout({ title, description, url, image, body, page, prev, next }) {
+  const fullTitle = page === 'home' ? `${cfg.author.name} — ${cfg.tagline}` : `${title} — ${cfg.author.name}`;
   const ogImage = abs(image || cfg.author.social || cfg.author.photo2x);
   const tw = cfg.links.find(l => l.key === 'twitter');
   return `<!doctype html>
@@ -210,39 +169,102 @@ function layout({ title, description, url, image, body, page, posts, prev, next 
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(abs(url))}">
 <meta name="author" content="${esc(cfg.author.name)}">
-<meta name="theme-color" content="#0b0e14">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fbfaf7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#15171a">
 <meta property="og:type" content="${page === 'post' ? 'article' : 'website'}">
-<meta property="og:site_name" content="${esc(cfg.title)}">
+<meta property="og:site_name" content="${esc(cfg.author.name)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(abs(url))}">
 <meta property="og:image" content="${esc(ogImage)}">
 <meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">
 ${tw ? `<meta name="twitter:site" content="${esc(tw.handle)}">\n<meta name="twitter:creator" content="${esc(tw.handle)}">` : ''}
-<link rel="alternate" type="application/rss+xml" title="${esc(cfg.title)}" href="/feed.xml">
+<link rel="alternate" type="application/rss+xml" title="${esc(cfg.author.name)}" href="/feed.xml">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${prev ? `<link rel="prev" href="${esc(prev)}">` : ''}${next ? `<link rel="next" href="${esc(next)}">` : ''}
-<script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>${css}</style>
 </head>
 <body data-page="${page}">
-<main class="term" id="term">
-<div id="out">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="/">${esc(cfg.author.name)}</a>
+  <nav aria-label="Site"><a href="/#writing">Writing</a><a href="/#contact">Contact</a><a href="/feed.xml">RSS</a></nav>
+</header>
+<main id="main">
 ${body}
-</div>
-${promptHtml()}
 </main>
-<script id="fs" type="application/json">${fsJson(posts)}</script>
-<script src="/app.js" defer></script>
+<footer class="site-footer">
+  <p>© ${new Date().getFullYear()} ${esc(cfg.author.name)}</p>
+  <p>${cfg.links.map(l => `<a href="${esc(l.href)}" rel="me noopener">${esc(linkName(l))}</a>`).join(' · ')}</p>
+</footer>
 </body>
 </html>
 `;
 }
 
-const sshLine = () => `<div class="e boot" id="boot"><div class="c"><span class="ps1 local">$</span> <span class="t" id="ssh-cmd">ssh ${U}@${H}</span></div><div class="o" id="ssh-out"></div></div>`;
-const homeBody = posts => sshLine() + `<div class="e" id="motd-entry"><div class="o">${motd(posts)}</div></div>`;
-const postBody = (p, posts) => sshLine() + `<div class="e"><div class="o">${shortMotd()}</div></div>` + entry(`cat posts/${postFile(p)}`, postOut(p));
-const notFoundBody = () => sshLine() + `<div class="e"><div class="o">${shortMotd()}</div></div>` + entry('cat <span id="nf-path">/that/page</span>', `<span class="err">cat: no such file or directory (404)</span>\nTry ${run('ls')} or ${run('help')}.`).replace('<span class="t">cat &lt;span id=&quot;nf-path&quot;&gt;/that/page&lt;/span&gt;</span>', '<span class="t">cat <span id="nf-path">/that/page</span></span>') + `<script>document.getElementById('nf-path').textContent=location.pathname</script>`;
+const postItem = p => `<li>
+      <time datetime="${esc(p.date)}">${esc(longDate(p.date))}</time>
+      <h3><a href="${esc(p.url)}">${esc(p.title)}</a></h3>
+      <p>${esc(p.description)}</p>
+    </li>`;
+
+const homeBody = posts => `
+<section class="intro">
+  <img class="portrait" src="${esc(cfg.author.photo)}" srcset="${esc(cfg.author.photo)} 1x, ${esc(cfg.author.photo2x)} 2x" width="128" height="128" alt="Portrait of ${esc(cfg.author.name)}" fetchpriority="high">
+  <div>
+    <h1>${esc(cfg.author.name)}</h1>
+    <p class="lede">${esc(cfg.tagline)}</p>
+  </div>
+</section>
+
+<section id="writing" class="section">
+  <h2>Writing</h2>
+  <ol class="posts">
+    ${posts.map(postItem).join('\n    ')}
+  </ol>
+</section>
+
+<section id="contact" class="section">
+  <h2>Contact</h2>
+  ${contacts()}
+</section>
+`;
+
+const postBody = p => {
+  const tw = cfg.links.find(l => l.key === 'twitter');
+  const u = encodeURIComponent(abs(p.url));
+  const t = encodeURIComponent(p.title + (tw ? ' by ' + tw.handle : ''));
+  return `
+<article class="post">
+  <header class="post-header">
+    <p class="eyebrow"><time datetime="${esc(p.date)}">${esc(longDate(p.date))}</time> · ${p.minutes}-minute read</p>
+    <h1>${esc(p.title)}</h1>
+    <p class="lede">${esc(p.description)}</p>
+  </header>
+  <div class="prose">
+${p.html}
+  </div>
+  <footer class="post-footer">
+    <p class="share"><span>Share</span> <a href="https://x.com/intent/post?text=${t}&url=${u}" rel="noopener">X</a> · <a href="https://www.linkedin.com/sharing/share-offsite/?url=${u}" rel="noopener">LinkedIn</a> · <a href="mailto:?subject=${encodeURIComponent(p.title)}&body=${u}">Email</a></p>
+    <p class="tags">${p.tags.map(t => esc(t)).join(' · ')}</p>
+    <nav class="post-nav" aria-label="More writing">
+      ${p.newer ? `<a href="${esc(p.newer.url)}"><small>Newer</small>${esc(p.newer.title)}</a>` : '<span></span>'}
+      ${p.older ? `<a class="right" href="${esc(p.older.url)}"><small>Older</small>${esc(p.older.title)}</a>` : '<span></span>'}
+    </nav>
+    <p><a href="/#writing">← All writing</a></p>
+  </footer>
+</article>
+`;
+};
+
+const notFoundBody = () => `
+<section class="section">
+  <h1>Page not found</h1>
+  <p class="lede">The address you followed does not exist on this site.</p>
+  <p><a href="/">Return to the home page</a> or see <a href="/#writing">all writing</a>.</p>
+</section>
+`;
 
 const feed = posts => `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
@@ -279,7 +301,6 @@ async function build() {
   await fs.rm(OUT, { recursive: true, force: true });
   await fs.mkdir(OUT, { recursive: true });
   await fs.cp(path.join(ROOT, 'static'), OUT, { recursive: true });
-  await fs.copyFile(path.join(ROOT, 'src', 'app.js'), path.join(OUT, 'app.js'));
 
   const posts = await loadPosts();
   const write = async (rel, html) => {
@@ -289,17 +310,16 @@ async function build() {
   };
 
   await write('index.html', layout({
-    page: 'home', url: '/', title: cfg.title, description: cfg.description, posts,
+    page: 'home', url: '/', title: cfg.author.name, description: cfg.description,
     body: homeBody(posts),
   }));
   for (const p of posts) {
     await write(path.join(p.url, 'index.html'), layout({
-      page: 'post', url: p.url, title: p.title, description: p.description, posts,
-      image: p.image, body: postBody(p, posts), prev: p.newer?.url, next: p.older?.url,
+      page: 'post', url: p.url, title: p.title, description: p.description,
+      image: p.image, body: postBody(p), prev: p.newer?.url, next: p.older?.url,
     }));
-    await write(path.join(p.url, 'body.html'), postOut(p));
   }
-  await write('404.html', layout({ page: '404', url: '/404.html', title: 'not found', description: 'No such file or directory.', posts, body: notFoundBody() }));
+  await write('404.html', layout({ page: '404', url: '/404.html', title: 'Page not found', description: 'The address you followed does not exist on this site.', body: notFoundBody() }));
   await write('feed.xml', feed(posts));
   await write('sitemap.xml', sitemap(posts));
   await write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${abs('/sitemap.xml')}\n`);
