@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 const DIST = path.join(import.meta.dirname, '..', 'dist');
-const BUDGET = { 'index.html': 24_000, 'app.js': 9_000 };
+const BUDGET = { 'index.html': 28_000, 'app.js': 20_000 };
 let fail = 0;
 const bad = m => { console.error('✗ ' + m); fail++; };
 for (const f of ['index.html', 'app.js', 'feed.xml', 'sitemap.xml', '404.html', 'robots.txt', 'favicon.svg']) {

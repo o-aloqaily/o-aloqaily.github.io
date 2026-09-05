@@ -4,7 +4,10 @@
   "tagline": "I share my knowledge and experience in interesting software engineering topics!",
   "description": "Personal site and blog of Osamh Aloqaily — software engineering, Go, systems.",
   "language": "en",
-  "prompt": { "user": "osamh", "host": "blog" },
+  "prompt": {
+    "user": "guest",
+    "host": "osmh"
+  },
   "author": {
     "name": "Osamh Aloqaily",
     "photo": "/photo-192.webp",
@@ -12,9 +15,30 @@
     "social": "/photo-384.jpg"
   },
   "links": [
-    { "key": "github",   "label": "github.com/o-aloqaily",        "href": "https://github.com/o-aloqaily" },
-    { "key": "twitter",  "label": "x.com/osaloqaily",             "href": "https://x.com/osaloqaily", "handle": "@osaloqaily" },
-    { "key": "linkedin", "label": "linkedin.com/in/o-aloqaily",   "href": "https://www.linkedin.com/in/o-aloqaily" },
-    { "key": "email",    "label": "samaloqaily@gmail.com",        "href": "mailto:samaloqaily@gmail.com" }
-  ]
+    {
+      "key": "github",
+      "label": "github.com/o-aloqaily",
+      "href": "https://github.com/o-aloqaily"
+    },
+    {
+      "key": "twitter",
+      "label": "x.com/osaloqaily",
+      "href": "https://x.com/osaloqaily",
+      "handle": "@osaloqaily"
+    },
+    {
+      "key": "linkedin",
+      "label": "linkedin.com/in/o-aloqaily",
+      "href": "https://www.linkedin.com/in/o-aloqaily"
+    },
+    {
+      "key": "email",
+      "label": "samaloqaily@gmail.com",
+      "href": "mailto:samaloqaily@gmail.com"
+    }
+  ],
+  "ssh": {
+    "user": "guest",
+    "host": "osmh"
+  }
 }

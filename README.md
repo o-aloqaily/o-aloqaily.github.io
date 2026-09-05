@@ -1,8 +1,10 @@
 # osamh@blog:~$
 
-Personal site and blog of Osamh Aloqaily. Plain static HTML with a terminal
-look: vim-style keyboard controls for engineers, ordinary links, buttons and a
-help panel for everyone else.
+Personal site and blog of Osamh Aloqaily. It behaves like an SSH session: you
+land on `$ ssh guest@osmh`, get a login banner, and type real commands at a
+working prompt (`help`, `ls posts`, `cat about.txt`, `cat posts/<file>.md`).
+Every command and filename in the output is clickable and there are tap chips
+under the prompt, so it works for people who never touch a terminal.
 
 - **Zero runtime dependencies.** No framework, no web fonts, no analytics. One
   inlined stylesheet and one ~5KB deferred script per page.
@@ -46,12 +48,17 @@ npm run check    # build + verify links, image dimensions and size budget
 npm run dev      # build, watch and serve dist/ locally
 ```
 
-## Keys
+## Shell
 
-`j`/`k` or arrows move, `enter` opens, `1`–`9` open the n-th post, `h` home,
-`[`/`]` newer/older post, `gg`/`G` top/bottom, `/` search, `:` command line
-(`:theme light`, `:open 2`, `:github`, `:rss` …), `t` theme, `c` copy link,
-`?` help. Everything is also clickable.
+Commands: `help`, `ls [dir]`, `cat <file>`, `cd <dir>`, `open <n>`, `share`,
+`links` (also `github`, `twitter`, `linkedin`, `email`), `theme [dark|light]`,
+`clear`, `neofetch`, `whoami`, `date`, `history`, `exit`. Tab completes
+commands and paths, ↑/↓ walk history, ctrl+c cancels, ctrl+l clears.
+
+Every page is a complete pre-rendered transcript (home = banner + MOTD, post =
+`cat posts/<file>.md` + the post), so shared links, social cards and no-JS
+visitors all work; `app.js` only makes the prompt live. `cat` of a post fetches
+`/posts/<slug>/body.html` and updates the URL.
 
 ## Config
 
