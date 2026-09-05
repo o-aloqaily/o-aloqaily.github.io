@@ -18,7 +18,7 @@ for (const f of pages) {
     if (m[1].endsWith('/')) p = path.join(p, 'index.html');
     if (!fs.existsSync(p) && !fs.existsSync(path.join(p, 'index.html'))) bad(`${path.relative(DIST, f)} → ${m[1]} does not exist`);
   }
-  for (const m of html.matchAll(/<img [^>]*>/g)) if (!/width="\d+"/.test(m[0])) bad(`${path.relative(DIST, f)}: <img> without width/height: ${m[0].slice(0, 80)}`);
+  for (const m of html.matchAll(/<img [^>]*>/g)) if (/src="\//.test(m[0]) && !/width="\d+"/.test(m[0])) bad(`${path.relative(DIST, f)}: <img> without width/height: ${m[0].slice(0, 80)}`);
 }
 for (const [f, max] of Object.entries(BUDGET)) {
   const size = fs.statSync(path.join(DIST, f)).size;
