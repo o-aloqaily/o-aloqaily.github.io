@@ -157,7 +157,7 @@ const linkName = l => l.name || LINK_NAMES[l.key] || l.key;
 const contacts = () => `<dl class="contacts">${cfg.links.map(l => `<div><dt>${esc(linkName(l))}</dt><dd><a href="${esc(l.href)}" rel="me noopener">${esc(l.label)}</a></dd></div>`).join('')}</dl>`;
 
 function layout({ title, description, url, image, body, page, prev, next }) {
-  const fullTitle = page === 'home' ? `${cfg.author.name} — ${cfg.tagline}` : `${title} — ${cfg.author.name}`;
+  const fullTitle = page === 'home' ? cfg.author.name : `${title} — ${cfg.author.name}`;
   const ogImage = abs(image || cfg.author.social || cfg.author.photo2x);
   const tw = cfg.links.find(l => l.key === 'twitter');
   return `<!doctype html>
