@@ -1,4 +1,4 @@
-# Osamh Aloqaily — personal site
+# Osamh Aloqaili — personal site
 
 A formal, editorial personal site and blog: profile, contact links and
 writing. Plain static HTML with system fonts and no JavaScript, so every page
