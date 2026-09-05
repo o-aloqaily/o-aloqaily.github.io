@@ -4,9 +4,10 @@ slug: the-double-edged-sword-of-taking-pride-in-your-craft
 date: 2026-09-05
 description: Pride in your work is a strength right up until it turns into over-engineering. On staying connected to the problem, the business and what actually matters.
 tags: [software engineering, craft, startups]
+image: /media/pit-stop.jpg
 ---
 
-![Formula race car pit with the team rushing to fix the car](https://specials-images.forbesimg.com/imageserve//62ab53c82e1e4508a38819cd/960x0.jpg)
+![Formula One pit crew swarming a Ferrari during a pit stop](/media/pit-stop.webp "Ferrari pit stop, 2008 Chinese Grand Prix. Photo: Bert van Dijk, CC BY-SA 2.0, via Wikimedia Commons")
 
 Suppose you’re in a Formula car race as part of a team that’s attempting to win at all costs. You’ve been preparing for this race nonstop and around the clock. People are hyped up, and the race starts. Your car is racing alongside all the others and is doing well. Suddenly, a tire blows out. Normal. This happens, and that’s why there is a pit. Your driver heads to the pit, stops at your designated spot, and your whole team rushes to the car to change the tire in seconds. Every millisecond here counts. Your car then leaves the pit, gets back into the race, and the momentum is still extremely high. This is expected, right?
 
@@ -16,7 +17,7 @@ At times, we become very disconnected from the real world to the point of doing 
 
 If this analogy did not land, let me take you through another one that I’m very fond of. I come from a small town in Saudi Arabia. Unlike extremely populated and busy cities like Riyadh, there is almost no traffic there. On many streets, you don’t even need traffic lights. Roundabouts do just fine because, in most cases, traffic is extremely low-volume. Only a few cars might pass in an hour. It wouldn’t make sense to install traffic lights and have cars waiting when the problem could be solved with a much cheaper and more efficient solution: a roundabout.
 
-![A very complex multi-level highway interchange](https://as2.ftcdn.net/v2/jpg/02/07/99/19/1000_F_207991910_TZwkkm2KH4U4vAm98rXsYW9TvUYD7HVQ.jpg)
+![Aerial view of a full cloverleaf highway interchange](/media/cloverleaf-interchange.webp "Cloverleaf interchange, I-494 at I-35W, Minnesota. Photo: formulanone, CC BY-SA 2.0, via Wikimedia Commons")
 
 Now imagine a civil engineer was assigned such an intersection and thought, “You know what? Let me build a fully sophisticated highway with a cloverleaf interchange because it’s better.” Well, is it actually better in this case? You just spent 20x the cost, or more, and it may not even be more convenient for drivers. It’s overly complicated for no reason and might actually make the journey longer. But then the engineer justifies it by saying, “Well, it’s scalable in case the intersection grows in volume later.” Okay, but what if it doesn’t? There may be plenty of reasons to believe that it won’t. And wouldn’t the whole thing require maintenance throughout that period anyway? Even ten years from now? Wouldn’t it have been better to build a simpler solution that fits your needs today, and then, in ten years, if the need actually exists, scale it up?
 
