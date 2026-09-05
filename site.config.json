@@ -1,8 +1,8 @@
 {
   "url": "https://oqaili.dev",
   "title": "Osamh Aloqaily",
-  "tagline": "I build software and write about what I learn along the way, from how Go schedules its goroutines to the quieter craft of designing systems that hold up. This site collects that thinking, one article at a time.",
-  "description": "Personal site of Osamh Aloqaily: writing on software engineering, Go and the craft of building systems that last.",
+  "tagline": "I build software, and I write here about the work: the engineering itself, the people behind it, and the habits, judgement and lessons that a life spent building things brings with it.",
+  "description": "Personal site of Osamh Aloqaily: writing on software engineering, the craft, and the people behind it.",
   "language": "en",
   "author": {
     "name": "Osamh Aloqaily",
