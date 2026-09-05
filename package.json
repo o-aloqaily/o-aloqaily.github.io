@@ -1,0 +1,18 @@
+{
+  "name": "o-aloqaily.github.io",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Osamh Aloqaily's personal site — a zero-runtime-dependency static blog with a terminal UI",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --serve",
+    "new": "node scripts/new-post.mjs",
+    "check": "node build.mjs && node scripts/check.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "devDependencies": {
+    "highlight.js": "^11.11.1",
+    "marked": "^15.0.12"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "url": "https://o-aloqaily.github.io",
+  "title": "Osamh Aloqaily",
+  "tagline": "I share my knowledge and experience in interesting software engineering topics!",
+  "description": "Personal site and blog of Osamh Aloqaily — software engineering, Go, systems.",
+  "language": "en",
+  "prompt": { "user": "osamh", "host": "blog" },
+  "author": {
+    "name": "Osamh Aloqaily",
+    "photo": "/photo-192.webp",
+    "photo2x": "/photo-384.webp",
+    "social": "/photo-384.jpg"
+  },
+  "links": [
+    { "key": "github",   "label": "github.com/o-aloqaily",        "href": "https://github.com/o-aloqaily" },
+    { "key": "twitter",  "label": "x.com/osaloqaily",             "href": "https://x.com/osaloqaily", "handle": "@osaloqaily" },
+    { "key": "linkedin", "label": "linkedin.com/in/o-aloqaily",   "href": "https://www.linkedin.com/in/o-aloqaily" },
+    { "key": "email",    "label": "samaloqaily@gmail.com",        "href": "mailto:samaloqaily@gmail.com" }
+  ]
+}
