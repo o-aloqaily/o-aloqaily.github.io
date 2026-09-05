@@ -10,6 +10,7 @@ import fs from 'node:fs/promises';
 import { existsSync, watch } from 'node:fs';
 import path from 'node:path';
 import http from 'node:http';
+import { createHash } from 'node:crypto';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 
@@ -123,11 +124,11 @@ async function renderMarkdown(md) {
 // ---------------------------------------------------------------- content
 async function loadPosts() {
   const dir = path.join(ROOT, 'content', 'posts');
-  const posts = [];
+  let posts = [];
   for (const f of (await fs.readdir(dir)).filter(f => f.endsWith('.md')).sort()) {
     const src = await fs.readFile(path.join(dir, f), 'utf8');
     const { data, body } = frontmatter(src);
-    if (data.draft === true) continue;
+    const draft = data.draft === true;
     const slug = data.slug || slugify(f.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.md$/, ''));
     const date = data.date || f.slice(0, 10);
     const words = body.replace(/```[\s\S]*?```/g, '').split(/\s+/).filter(Boolean).length;
@@ -138,13 +139,16 @@ async function loadPosts() {
       tags: Array.isArray(data.tags) ? data.tags : (data.tags ? [data.tags] : []),
       image: data.image || null,
       minutes: Math.max(1, Math.round(words / 220)),
-      url: `/posts/${slug}/`,
+      draft,
+      url: draft ? `/drafts/${slug}-${createHash('sha256').update(slug + f + src.length).digest('hex').slice(0, 10)}/` : `/posts/${slug}/`,
       html: await renderMarkdown(body),
     });
   }
+  const drafts = posts.filter(p => p.draft);
+  posts = posts.filter(p => !p.draft);
   posts.sort((a, b) => (a.date < b.date ? 1 : -1)); // newest first
   posts.forEach((p, i) => { p.newer = posts[i - 1] || null; p.older = posts[i + 1] || null; });
-  return posts;
+  return { posts, drafts };
 }
 
 // ---------------------------------------------------------------- templates
@@ -156,7 +160,7 @@ const linkName = l => l.name || LINK_NAMES[l.key] || l.key;
 
 const contacts = () => `<dl class="contacts">${cfg.links.map(l => `<div><dt>${esc(linkName(l))}</dt><dd><a href="${esc(l.href)}" rel="me noopener">${esc(l.label)}</a></dd></div>`).join('')}</dl>`;
 
-function layout({ title, description, url, image, body, page, prev, next }) {
+function layout({ title, description, url, image, body, page, prev, next, noindex }) {
   const fullTitle = page === 'home' ? cfg.author.name : `${title} — ${cfg.author.name}`;
   const ogImage = abs(image || cfg.author.social || cfg.author.photo2x);
   const tw = cfg.links.find(l => l.key === 'twitter');
@@ -167,7 +171,7 @@ function layout({ title, description, url, image, body, page, prev, next }) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(description)}">
-<link rel="canonical" href="${esc(abs(url))}">
+<link rel="canonical" href="${esc(abs(url))}">${noindex ? '\n<meta name="robots" content="noindex, nofollow">' : ''}
 <meta name="author" content="${esc(cfg.author.name)}">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fbfaf7">
@@ -302,7 +306,7 @@ async function build() {
   await fs.mkdir(OUT, { recursive: true });
   await fs.cp(path.join(ROOT, 'static'), OUT, { recursive: true });
 
-  const posts = await loadPosts();
+  const { posts, drafts } = await loadPosts();
   const write = async (rel, html) => {
     const file = path.join(OUT, rel);
     await fs.mkdir(path.dirname(file), { recursive: true });
@@ -319,12 +323,18 @@ async function build() {
       image: p.image, body: postBody(p), prev: p.newer?.url, next: p.older?.url,
     }));
   }
+  for (const p of drafts) {
+    await write(path.join(p.url, 'index.html'), layout({
+      page: 'post', url: p.url, title: p.title, description: p.description, image: p.image, noindex: true,
+      body: `<p class="draft-banner">Unlisted draft preview — not published. Anyone with this exact link can read it.</p>` + postBody(p),
+    }));
+  }
   await write('404.html', layout({ page: '404', url: '/404.html', title: 'Page not found', description: 'The address you followed does not exist on this site.', body: notFoundBody() }));
   await write('feed.xml', feed(posts));
   await write('sitemap.xml', sitemap(posts));
-  await write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${abs('/sitemap.xml')}\n`);
+  await write('robots.txt', `User-agent: *\nDisallow: /drafts/\nAllow: /\nSitemap: ${abs('/sitemap.xml')}\n`);
   if (cfg.domain) await write('CNAME', cfg.domain + '\n');
-  console.log(`built ${posts.length} post(s) → dist/ in ${Math.round(performance.now() - t0)}ms`);
+  console.log(`built ${posts.length} post(s) + ${drafts.length} draft preview(s) → dist/ in ${Math.round(performance.now() - t0)}ms`);
 }
 
 await build();

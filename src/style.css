@@ -95,3 +95,5 @@ main{padding-top:1.5rem;padding-bottom:4rem}
 .post-nav small{display:block;color:var(--muted);font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.2rem}
 .post-nav .right{text-align:right}
 @media (max-width:520px){.post-nav{grid-template-columns:1fr}.post-nav .right{text-align:left}}
+.draft-banner{font-family:var(--sans);font-size:.85rem;color:#7a4b00;background:#fff4d6;border:1px solid #f0d58a;border-radius:6px;padding:.6rem .9rem;margin:0 0 1.5rem}
+@media (prefers-color-scheme:dark){.draft-banner{color:#ffd88a;background:#3a2c0c;border-color:#6b4f14}}
