@@ -1,5 +1,5 @@
 {
-  "url": "https://o-aloqaily.github.io",
+  "url": "https://oqaili.dev",
   "title": "Osamh Aloqaily",
   "tagline": "I share my knowledge and experience in interesting software engineering topics.",
   "description": "Personal site of Osamh Aloqaily — writing on software engineering, Go and systems.",
@@ -32,5 +32,6 @@
       "label": "samaloqaily@gmail.com",
       "href": "mailto:samaloqaily@gmail.com"
     }
-  ]
+  ],
+  "domain": "oqaili.dev"
 }
