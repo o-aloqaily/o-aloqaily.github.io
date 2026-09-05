@@ -4,7 +4,6 @@ slug: the-double-edged-sword-of-taking-pride-in-your-craft
 date: 2026-09-05
 description: Pride in your work is a strength right up until it turns into over-engineering. On staying connected to the problem, the business and what actually matters.
 tags: [software engineering, craft, startups]
-draft: true
 ---
 
 ![Formula race car pit with the team rushing to fix the car](https://specials-images.forbesimg.com/imageserve//62ab53c82e1e4508a38819cd/960x0.jpg)
